@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     chrome.storage.sync.get('speed', (speed) => {
-        if (speed && speed['speed']) {
-            slider.value = speed['speed'];
-            value.innerHTML = speed['speed'];
-        }
+        let savedSpeed = speed['speed'];
+        slider.value = savedSpeed;
+        value.innerHTML = savedSpeed;
+        applyChanges(savedSpeed);
     });
 
     slider.addEventListener("input", (event) => {
@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
         value.innerHTML = newSpeed;
 
         //Changes all tabs
+        applyChanges(newSpeed);
+
+        chrome.storage.sync.set({ 'speed': newSpeed });
+    });
+
+    function applyChanges(newSpeed) {
         let src = 'document.querySelectorAll("video, audio").forEach(function (x) { x.playbackRate = ' + newSpeed + '})' + ';';
 
         chrome.tabs.query({}, (tabs) => {
@@ -22,8 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 chrome.tabs.executeScript(tab.id, { code: src });
             });
         });
-
-        chrome.storage.sync.set({ 'speed': newSpeed });
-    });
+    }
 });
 
