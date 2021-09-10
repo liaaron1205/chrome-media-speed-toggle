@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     chrome.storage.sync.get('speed', (speed) => {
-        if (speed) {
+        if (speed && speed['speed']) {
             slider.value = speed['speed'];
             value.innerHTML = speed['speed'];
         }
